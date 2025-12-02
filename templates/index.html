@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Home - Restaurant Management{% endblock %}
+{% block title %}Home - Gemina Trattoria{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-md-12">
         <div class="jumbotron bg-light p-5 rounded">
-            <h1 class="display-4"><i class="bi bi-shop"></i> Welcome to Restaurant Manager</h1>
-            <p class="lead">Manage your restaurant menu, orders, and track user locations in real-time.</p>
+            <h1 class="display-4"><i class="bi bi-shop"></i> Welcome to Gemina Trattoria</h1>
+            <p class="lead">Authentic Italian cuisine with modern management and security.</p>
             <hr class="my-4">
             {% if session.user_id %}
                 <p>Hello, <strong>{{ session.username }}</strong>! Ready to place an order?</p>
