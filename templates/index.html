@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Restaurant Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="jumbotron bg-light p-5 rounded">
+            <h1 class="display-4"><i class="bi bi-shop"></i> Welcome to Restaurant Manager</h1>
+            <p class="lead">Manage your restaurant menu, orders, and track user locations in real-time.</p>
+            <hr class="my-4">
+            {% if session.user_id %}
+                <p>Hello, <strong>{{ session.username }}</strong>! Ready to place an order?</p>
+                <a class="btn btn-primary btn-lg" href="/menu" role="button"><i class="bi bi-card-list"></i> View Menu</a>
+                <a class="btn btn-success btn-lg" href="/orders" role="button"><i class="bi bi-cart"></i> My Orders</a>
+            {% else %}
+                <p>Please login or register to place orders.</p>
+                <a class="btn btn-primary btn-lg" href="/login" role="button"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                <a class="btn btn-secondary btn-lg" href="/register" role="button"><i class="bi bi-person-plus"></i> Register</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="bi bi-card-list" style="font-size: 3rem; color: #0d6efd;"></i>
+                <h5 class="card-title mt-3">Browse Menu</h5>
+                <p class="card-text">View our delicious menu items and make your selection.</p>
+                <a href="/menu" class="btn btn-primary">View Menu</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="bi bi-cart" style="font-size: 3rem; color: #198754;"></i>
+                <h5 class="card-title mt-3">Place Orders</h5>
+                <p class="card-text">Quick and easy ordering with real-time tracking.</p>
+                {% if session.user_id %}
+                    <a href="/orders" class="btn btn-success">My Orders</a>
+                {% else %}
+                    <a href="/login" class="btn btn-success">Login to Order</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="bi bi-geo-alt" style="font-size: 3rem; color: #dc3545;"></i>
+                <h5 class="card-title mt-3">Location Tracking</h5>
+                <p class="card-text">Advanced IP tracking for security and fraud detection.</p>
+                {% if session.is_admin %}
+                    <a href="/admin/locations" class="btn btn-danger">View Locations</a>
+                {% else %}
+                    <span class="text-muted">Admin Only</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Graph Analytics - Admin{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2><i class="bi bi-diagram-3"></i> Graph Analytics</h2>
+        <p class="text-muted">Network visualization of users, IPs, and locations</p>
+        {% if demo_mode %}
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle"></i> 
+            <strong>Demo Mode:</strong> Graph data includes simulated connections from Paris, London, Bordeaux, and Lyon.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-graph-up"></i> Network Graph</h5>
+            </div>
+            <div class="card-body">
+                <div id="graph-container" style="height: 600px; border: 1px solid #ddd; border-radius: 5px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-people"></i> User Statistics</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tr>
+                        <th>Total Users:</th>
+                        <td>{{ stats.total_users }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total IPs:</th>
+                        <td>{{ stats.total_ips }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total Cities:</th>
+                        <td>{{ stats.total_cities }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total Regions:</th>
+                        <td>{{ stats.total_regions }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total Countries:</th>
+                        <td>{{ stats.total_countries }}</td>
+                    </tr>
+                    <tr>
+                        <th>Suspicious IPs:</th>
+                        <td class="text-danger"><strong>{{ stats.suspicious_ips }}</strong></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Fraud Alerts</h5>
+            </div>
+            <div class="card-body">
+                {% if fraud_alerts %}
+                <ul class="list-group list-group-flush">
+                    {% for alert in fraud_alerts %}
+                    <li class="list-group-item">
+                        <strong>{{ alert.ip }}</strong> used by {{ alert.user_count }} users
+                        <br>
+                        <small class="text-muted">{{ alert.users|join(', ') }}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <div class="alert alert-success mb-0">
+                    <i class="bi bi-check-circle"></i> No fraud detected
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0"><i class="bi bi-list"></i> Graph Legend</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <div style="width: 20px; height: 20px; background-color: #4285f4; border-radius: 50%; margin-right: 10px;"></div>
+                            <span>User</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <div style="width: 20px; height: 20px; background-color: #fbbc04; border-radius: 50%; margin-right: 10px;"></div>
+                            <span>Email</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <div style="width: 20px; height: 20px; background-color: #ea4335; border-radius: 50%; margin-right: 10px;"></div>
+                            <span>IP Address</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <div style="width: 20px; height: 20px; background-color: #34a853; border-radius: 50%; margin-right: 10px;"></div>
+                            <span>City</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <div style="width: 20px; height: 20px; background-color: #9c27b0; border-radius: 50%; margin-right: 10px;"></div>
+                            <span>Region</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <div style="width: 20px; height: 20px; background-color: #ff9800; border-radius: 50%; margin-right: 10px;"></div>
+                            <span>Country</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" rel="stylesheet">
+
+<script>
+    // Graph data from backend
+    const graphData = {{ graph_data|tojson|safe }};
+    
+    // Create nodes and edges arrays
+    const nodes = new vis.DataSet(graphData.nodes);
+    const edges = new vis.DataSet(graphData.edges);
+    
+    // Create network
+    const container = document.getElementById('graph-container');
+    const data = { nodes: nodes, edges: edges };
+    
+    const options = {
+        nodes: {
+            shape: 'dot',
+            size: 20,
+            font: {
+                size: 14,
+                color: '#000000'
+            },
+            borderWidth: 2,
+            shadow: true
+        },
+        edges: {
+            width: 2,
+            color: { 
+                color: '#848484',
+                highlight: '#2B7CE9'
+            },
+            arrows: {
+                to: { enabled: true, scaleFactor: 0.5 }
+            },
+            smooth: {
+                type: 'continuous'
+            }
+        },
+        physics: {
+            enabled: true,
+            barnesHut: {
+                gravitationalConstant: -2000,
+                centralGravity: 0.3,
+                springLength: 150,
+                springConstant: 0.04,
+                damping: 0.09
+            },
+            stabilization: {
+                iterations: 200
+            }
+        },
+        interaction: {
+            hover: true,
+            tooltipDelay: 200,
+            navigationButtons: true,
+            keyboard: true
+        }
+    };
+    
+    const network = new vis.Network(container, data, options);
+    
+    // Add click event
+    network.on('click', function(params) {
+        if (params.nodes.length > 0) {
+            const nodeId = params.nodes[0];
+            const node = nodes.get(nodeId);
+            alert('Node: ' + node.label + '\nType: ' + node.group);
+        }
+    });
+</script>
+{% endblock %}

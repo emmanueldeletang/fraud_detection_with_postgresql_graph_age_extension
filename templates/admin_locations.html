@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Location Tracking - Admin{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2><i class="bi bi-geo-alt"></i> User Location Tracking</h2>
+        <p class="text-muted">Monitor user locations and detect potential fraud</p>
+        {% if demo_mode %}
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle"></i> 
+            <strong>Demo Mode:</strong> Location data is generated using simulated IPs from Paris, London, Bordeaux, and Lyon.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if locations %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>IP Address</th>
+                            <th>Detected Location</th>
+                            <th>Registered City</th>
+                            <th>Match</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for loc in locations %}
+                        <tr>
+                            <td>{{ loc.user.username }}</td>
+                            <td>
+                                <span class="badge bg-{% if loc.action == 'order' %}success{% else %}primary{% endif %}">
+                                    {{ loc.action }}
+                                </span>
+                            </td>
+                            <td><code>{{ loc.ip_address }}</code></td>
+                            <td>{{ loc.city }}, {{ loc.country }}</td>
+                            <td>{{ loc.user.city }}</td>
+                            <td>
+                                {% if loc.matches_user_city == True %}
+                                    <span class="badge bg-success"><i class="bi bi-check-circle"></i> Match</span>
+                                {% elif loc.matches_user_city == False %}
+                                    <span class="badge bg-danger"><i class="bi bi-exclamation-triangle"></i> Mismatch</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Unknown</span>
+                                {% endif %}
+                            </td>
+                            <td><small>{{ loc.timestamp }}</small></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info">No location data yet.</div>
+{% endif %}
+{% endblock %}

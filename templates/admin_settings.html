@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - Admin{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2><i class="bi bi-gear-fill"></i> Admin Settings</h2>
+        <p class="text-muted">Configure application behavior</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-sliders"></i> IP Geolocation Settings</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="demo_mode" name="demo_mode" 
+                                   {% if demo_mode %}checked{% endif %}>
+                            <label class="form-check-label" for="demo_mode">
+                                <strong>Enable Demo Mode</strong>
+                            </label>
+                        </div>
+                        <small class="text-muted">
+                            When enabled, the application will use simulated IP addresses instead of real client IPs for location tracking.
+                            This is useful for demonstrations and testing the fraud detection system.
+                        </small>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading"><i class="bi bi-info-circle"></i> Demo IP Addresses:</h6>
+                        <ul class="mb-0">
+                            <li><strong>195.154.122.113</strong> - Paris, Île-de-France, France</li>
+                            <li><strong>81.2.69.142</strong> - London, England, United Kingdom</li>
+                            <li><strong>90.119.169.42</strong> - Bordeaux, Nouvelle-Aquitaine, France</li>
+                            <li><strong>87.98.154.146</strong> - Lyon, Auvergne-Rhône-Alpes, France</li>
+                        </ul>
+                        <hr>
+                        <small class="mb-0">
+                            <i class="bi bi-arrow-repeat"></i> The system will rotate through these IPs automatically for each order or login action.
+                        </small>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Save Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0"><i class="bi bi-shield-check"></i> Current Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="fw-bold">Demo Mode:</label>
+                    <div>
+                        {% if demo_mode %}
+                        <span class="badge bg-success fs-6">
+                            <i class="bi bi-check-circle"></i> ENABLED
+                        </span>
+                        {% else %}
+                        <span class="badge bg-secondary fs-6">
+                            <i class="bi bi-x-circle"></i> DISABLED
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="mb-3">
+                    <label class="fw-bold">IP Source:</label>
+                    <div>
+                        {% if demo_mode %}
+                        <small class="text-muted">Simulated (Demo)</small>
+                        {% else %}
+                        <small class="text-muted">Real Client IPs</small>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold">Geolocation API:</label>
+                    <div>
+                        <small class="text-muted">ipapi.co</small>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning mt-3">
+                    <small>
+                        <i class="bi bi-exclamation-triangle"></i> 
+                        <strong>Note:</strong> Changing demo mode requires a restart to fully take effect.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
