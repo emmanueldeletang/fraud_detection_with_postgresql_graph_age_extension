@@ -1,5 +1,6 @@
 # Restaurant Management System
 
+WELCOME to Gemina trattoria ( why gemina , this was the name of my Grand mother who teach me how to cook , and she was an incredible mediteranean grand mother with all the advantage you can imagine for his grandchildren)
 Full-stack Flask application with REST API and Web UI for restaurant management, featuring user authentication, menu management, order tracking, IP geolocation, fraud detection, and interactive graph analytics.
 
 ## Features
@@ -491,3 +492,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 MIT
+
