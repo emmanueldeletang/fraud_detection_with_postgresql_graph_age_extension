@@ -1,22 +1,46 @@
-# fraud_detection_with_postgresql_graph_age_extension
+# Restaurant Management System
 
-Flask-based REST API for a restaurant management system with user authentication, menu management, and order tracking with IP geolocation.
+Full-stack Flask application with REST API and Web UI for restaurant management, featuring user authentication, menu management, order tracking, IP geolocation, fraud detection, and interactive graph analytics.
 
 ## Features
 
-- **User Authentication**: Register and login with JWT tokens
-- **Role-Based Access**: Admin and regular user roles
-- **Menu Management**: Admins can add, modify, and remove menu items
+### Core Features
+- **User Authentication**: Register and login with JWT tokens (API) and session-based auth (Web UI)
+- **Role-Based Access**: Admin and regular user roles with different permissions
+- **Menu Management**: Admins can add, modify, and remove menu items with images
 - **Order System**: Users can place orders with real-time IP tracking
-- **IP Geolocation**: Tracks user location and compares with registered city
+- **Shopping Cart**: Web-based shopping cart with quantity management
+- **Order History**: Track order status and view detailed order information
+
+### Security & Fraud Detection
+- **IP Geolocation**: Tracks user location using ipapi.co and compares with registered city
 - **Location Verification**: Detects if orders are placed from unexpected locations
+- **Demo Mode**: Simulated IP addresses for testing (Paris, London, Bordeaux, Lyon)
+- **Graph Analytics**: Interactive network visualization showing user-IP-location relationships
+- **Fraud Alerts**: Automatic detection of suspicious patterns (shared IPs, city mismatches)
+
+### Admin Dashboard
+- **Statistics**: Revenue analytics, order counts, user spending patterns
+- **Order Management**: View and update all orders, track order status
+- **Menu Editor**: Full CRUD operations for menu items with image URLs
+- **Location Tracking**: Monitor user locations and detect anomalies
+- **Graph Visualization**: Interactive vis.js network showing fraud patterns
+- **Settings**: Toggle demo mode and configure application behavior
+
+### Performance Optimization
+- **PostgreSQL Indexes**: 28 optimized BTREE and composite indexes
+- **Connection Pooling**: Azure PostgreSQL-optimized connection handling
+- **Query Optimization**: Based on Microsoft Azure best practices
+- **TCP Keepalives**: Prevents connection drops on Azure
 
 ## Tech Stack
 
-- Flask
-- PostgreSQL with SQLAlchemy
-- JWT for authentication
-- IP geolocation with ipapi.co
+- **Backend**: Flask 3.0.0, Flask-SQLAlchemy, Flask-JWT-Extended
+- **Database**: PostgreSQL (Azure Database for PostgreSQL compatible)
+- **Authentication**: JWT tokens (API) + Flask sessions (Web)
+- **Frontend**: Bootstrap 5, Bootstrap Icons, vis.js (graph visualization)
+- **Geolocation**: ipapi.co API
+- **Security**: bcrypt password hashing, CORS support
 
 ## Installation
 
@@ -48,13 +72,46 @@ copy .env.example .env
 python init_db.py
 ```
 
+7. **Create performance indexes** (optional but recommended):
+```powershell
+python create_indexes.py
+```
+
+8. **Generate sample data** (optional):
+```powershell
+python generate_sample_data.py
+```
+This creates 10 users with 3-5 orders each for testing.
+
 ## Running the Application
 
 ```powershell
 python app.py
 ```
 
-The API will be available at `http://localhost:5000`
+- **API**: Available at `http://localhost:5000/api/`
+- **Web UI**: Available at `http://localhost:5000/`
+
+## Web UI Routes
+
+### Public Routes
+- **`/`** - Home page
+- **`/login`** - User login
+- **`/register`** - User registration
+- **`/menu`** - Browse menu items
+
+### User Routes (authentication required)
+- **`/cart`** - Shopping cart
+- **`/checkout`** - Place order
+- **`/orders`** - View order history
+
+### Admin Routes (admin role required)
+- **`/admin/menu`** - Manage menu items (add/edit/delete)
+- **`/admin/orders`** - View and manage all orders
+- **`/admin/statistics`** - Revenue and order analytics
+- **`/admin/locations`** - User location tracking
+- **`/admin/graph`** - Interactive graph analytics
+- **`/admin/settings`** - Application settings (demo mode)
 
 ## API Endpoints
 
@@ -140,6 +197,9 @@ The API will be available at `http://localhost:5000`
   Valid statuses: `pending`, `confirmed`, `preparing`, `delivered`, `cancelled`
 
 - **DELETE `/api/orders/{id}`** - Cancel order (only pending orders)
+
+- **GET `/api/orders/statistics`** - Get order statistics (admin only)
+  Returns: Overall stats and per-user statistics
 
 ## Authentication
 
